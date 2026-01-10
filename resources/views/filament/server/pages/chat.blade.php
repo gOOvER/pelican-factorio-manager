@@ -145,7 +145,10 @@
                     </p>
                     <div class="bg-gray-900 rounded-lg p-4 text-left">
                         <p class="text-xs text-gray-400 mb-2">{{ __('factorio-rcon::messages.chat.mod_install_hint') }}</p>
-                        <code class="text-xs text-info-400">pelican-chat-logger</code>
+                        <a href="https://mods.factorio.com/mod/pelican-chat-logger" target="_blank" class="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 transition-colors">
+                            <x-filament::icon icon="tabler-external-link" class="h-4 w-4" />
+                            <code class="text-xs">pelican-chat-logger</code>
+                        </a>
                     </div>
                 </div>
             </x-filament::section>

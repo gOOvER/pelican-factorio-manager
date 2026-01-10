@@ -25,7 +25,7 @@ The **Factorio RCON Manager** plugin enables direct management of Factorio serve
 
 For advanced features like **chat history** and **extended server status**, install the companion Factorio mod:
 
-📦 **[pelican-chat-logger](https://github.com/gOOvER/factorio-pelican-chat-logger)** 
+📦 **[Pelican Chat Logger](https://mods.factorio.com/mod/pelican-chat-logger)** | [GitHub](https://github.com/gOOvER/factorio-pelican-chat-logger) 
 
 The mod provides RCON commands that return JSON data directly:
 
@@ -49,7 +49,7 @@ Without the mod, the plugin still works but without chat log and extended status
   * **Egg Tag**: The server egg MUST have the `factorio` tag
   * **Egg Feature**: The server egg MUST have the `factorio-rcon` feature
   * **RCON Variables**: The egg must have `RCON_PORT` and `RCON_PASSWORD` variables configured
-* **Optional**: [pelican-chat-logger](https://github.com/gOOvER/factorio-pelican-chat-logger) mod for chat log features
+* **Optional**: [Pelican Chat Logger](https://mods.factorio.com/mod/pelican-chat-logger) mod for chat log features
 
 ## Installation
 

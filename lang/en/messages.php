@@ -31,6 +31,7 @@ return [
     ],
 
     'actions' => [
+        'refresh' => 'Refresh',
         'view' => 'View',
         'kick' => [
             'label' => 'Kick',

@@ -31,6 +31,7 @@ return [
     ],
 
     'actions' => [
+        'refresh' => 'Aktualisieren',
         'view' => 'Ansehen',
         'kick' => [
             'label' => 'Kicken',

@@ -9,6 +9,7 @@ use App\Traits\EnvironmentWriterTrait;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Schema;
 
 class FactorioRconPlugin implements Plugin, HasPluginSettings
 {

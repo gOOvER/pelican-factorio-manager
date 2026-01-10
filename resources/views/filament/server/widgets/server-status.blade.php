@@ -6,41 +6,49 @@
         $maxPlayers = $status['max_players'] ?? null;
     @endphp
 
-    <div class="flex flex-col gap-4 sm:flex-row sm:gap-4">
+    <style>
+        .factorio-rcon-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 1.5rem !important;
+        }
+    </style>
+
+    <div class="factorio-rcon-grid">
         {{-- Server Status --}}
-        <div class="flex-1 fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="flex gap-x-3">
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+        <div class="fi-small-stat-block grid grid-flow-row w-full p-3 rounded-lg bg-white shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+            <span>
+                <span class="text-md font-medium text-gray-500 dark:text-gray-400">
                     {{ __('factorio-rcon::messages.widget.server_status') }}
                 </span>
-                <span class="text-sm font-semibold {{ $status['online'] ? 'text-success-500' : 'text-danger-500' }}">
+                <span class="text-md font-semibold {{ $status['online'] ? 'text-success-500' : 'text-danger-500' }}">
                     {{ $status['online'] ? __('factorio-rcon::messages.values.online') : __('factorio-rcon::messages.values.offline') }}
                 </span>
-            </div>
+            </span>
         </div>
 
         {{-- Online Players --}}
-        <div class="flex-1 fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="flex gap-x-3">
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+        <div class="fi-small-stat-block grid grid-flow-row w-full p-3 rounded-lg bg-white shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+            <span>
+                <span class="text-md font-medium text-gray-500 dark:text-gray-400">
                     {{ __('factorio-rcon::messages.widget.online_players') }}
                 </span>
-                <span class="text-sm font-semibold text-gray-950 dark:text-white">
+                <span class="text-md font-semibold text-gray-950 dark:text-white">
                     {{ $onlineCount }} / {{ $maxPlayers ?? '∞' }}
                 </span>
-            </div>
+            </span>
         </div>
 
         {{-- RCON Status --}}
-        <div class="flex-1 fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="flex gap-x-3">
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+        <div class="fi-small-stat-block grid grid-flow-row w-full p-3 rounded-lg bg-white shadow-sm overflow-hidden ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+            <span>
+                <span class="text-md font-medium text-gray-500 dark:text-gray-400">
                     RCON
                 </span>
-                <span class="text-sm font-semibold {{ ($status['online'] && !isset($status['error'])) ? 'text-success-500' : 'text-danger-500' }}">
+                <span class="text-md font-semibold {{ ($status['online'] && !isset($status['error'])) ? 'text-success-500' : 'text-danger-500' }}">
                     {{ ($status['online'] && !isset($status['error'])) ? __('factorio-rcon::messages.values.connected') : __('factorio-rcon::messages.values.disconnected') }}
                 </span>
-            </div>
+            </span>
         </div>
     </div>
 </x-filament-widgets::widget>
