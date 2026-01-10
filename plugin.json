@@ -1,0 +1,11 @@
+{
+    "id": "factorio-rcon",
+    "name": "Factorio RCON Manager",
+    "author": "gOOvER",
+    "version": "1.0.0",
+    "description": "RCON management for Factorio servers with player management, chat, and server monitoring",
+    "category": "plugin",
+    "namespace": "gOOvER\\FactorioRcon",
+    "class": "FactorioRconPlugin",
+    "panels": ["server"]
+}
