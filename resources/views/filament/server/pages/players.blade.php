@@ -66,9 +66,9 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     @if($player['is_admin'])
-                                        <x-filament::icon icon="tabler-shield-check" class="h-5 w-5 text-warning-500" />
+                                        <x-filament::icon icon="tabler-shield-check" class="h-5 w-5 text-success-500" />
                                     @else
-                                        <x-filament::icon icon="tabler-shield" class="h-5 w-5 text-gray-400" />
+                                        <x-filament::icon icon="tabler-shield-x" class="h-5 w-5 text-danger-500" />
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
