@@ -25,15 +25,15 @@
 
         {{-- Table --}}
         <x-filament::section>
-            <div class="overflow-x-auto">
+            <div style="overflow: hidden;">
                 <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <colgroup>
-                        <col style="width: calc(100% - 450px);">
-                        <col style="width: 70px;">
-                        <col style="width: 70px;">
-                        <col style="width: 70px;">
-                        <col style="width: 70px;">
-                        <col style="width: 450px;">
+                        <col>
+                        <col style="width: 80px;">
+                        <col style="width: 80px;">
+                        <col style="width: 80px;">
+                        <col style="width: 80px;">
+                        <col style="width: 380px;">
                     </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
@@ -198,11 +198,11 @@
                 </div>
             </x-slot>
             
-            <div class="overflow-x-auto">
+            <div style="overflow: hidden;">
                 <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <colgroup>
-                        <col style="width: calc(100% - 450px);">
-                        <col style="width: 450px;">
+                        <col>
+                        <col style="width: 380px;">
                     </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
@@ -258,11 +258,11 @@
                 </div>
             </x-slot>
             
-            <div class="overflow-x-auto">
+            <div style="overflow: hidden;">
                 <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <colgroup>
-                        <col style="width: calc(100% - 450px);">
-                        <col style="width: 450px;">
+                        <col>
+                        <col style="width: 380px;">
                     </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
