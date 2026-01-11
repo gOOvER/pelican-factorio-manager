@@ -175,6 +175,118 @@
                 </table>
             </div>
         </x-filament::section>
+
+        {{-- Admin List --}}
+        @php
+            $admins = $this->getAdminList();
+        @endphp
+        <x-filament::section>
+            <x-slot name="heading">
+                <div class="flex items-center gap-2">
+                    <x-filament::icon icon="tabler-shield-check" class="h-5 w-5 text-warning-500" />
+                    {{ __('factorio-manager::messages.lists.admins') }}
+                    <span class="text-sm text-gray-500">({{ count($admins) }})</span>
+                </div>
+            </x-slot>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead>
+                        <tr class="bg-gray-50 dark:bg-gray-800">
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {{ __('factorio-manager::messages.columns.name') }}
+                            </th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {{ __('factorio-manager::messages.sections.management') }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                        @forelse($admins as $admin)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ $admin['name'] }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                    <x-filament::button
+                                        x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.demote.confirm', ['name' => $admin['name']]) }}')) { $wire.demotePlayer('{{ $admin['name'] }}') }"
+                                        color="warning"
+                                        size="xs"
+                                        icon="tabler-shield-x"
+                                    >
+                                        {{ __('factorio-manager::messages.actions.demote.label') }}
+                                    </x-filament::button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    {{ __('factorio-manager::messages.lists.no_admins') }}
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </x-filament::section>
+
+        {{-- Whitelist --}}
+        @php
+            $whitelisted = $this->getWhitelistList();
+        @endphp
+        <x-filament::section>
+            <x-slot name="heading">
+                <div class="flex items-center gap-2">
+                    <x-filament::icon icon="tabler-list-check" class="h-5 w-5 text-success-500" />
+                    {{ __('factorio-manager::messages.lists.whitelist') }}
+                    <span class="text-sm text-gray-500">({{ count($whitelisted) }})</span>
+                </div>
+            </x-slot>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead>
+                        <tr class="bg-gray-50 dark:bg-gray-800">
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {{ __('factorio-manager::messages.columns.name') }}
+                            </th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {{ __('factorio-manager::messages.sections.management') }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                        @forelse($whitelisted as $player)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ $player['name'] }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                    <x-filament::button
+                                        x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.whitelist_remove.confirm', ['name' => $player['name']]) }}')) { $wire.whitelistRemove('{{ $player['name'] }}') }"
+                                        color="warning"
+                                        size="xs"
+                                        icon="tabler-list-details"
+                                    >
+                                        {{ __('factorio-manager::messages.actions.whitelist_remove.label') }}
+                                    </x-filament::button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    {{ __('factorio-manager::messages.lists.no_whitelisted') }}
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </x-filament::section>
     </div>
     </div>
 </x-filament-panels::page>

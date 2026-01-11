@@ -102,6 +102,13 @@ return [
         'no_players' => 'No players found',
     ],
 
+    'lists' => [
+        'admins' => 'Server Admins',
+        'whitelist' => 'Whitelisted Players',
+        'no_admins' => 'No admins configured',
+        'no_whitelisted' => 'No players on whitelist',
+    ],
+
     'settings' => [
         'rcon_enabled' => 'Enable RCON',
         'rcon_enabled_helper' => 'Enables management of Factorio server via RCON.',

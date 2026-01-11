@@ -104,6 +104,34 @@ class Players extends Page implements HasForms
         };
     }
 
+    /**
+     * Get all admins (for separate admin list)
+     */
+    public function getAdminList(): array
+    {
+        $server = Filament::getTenant();
+        if (!$server) {
+            return [];
+        }
+
+        $provider = app(FactorioRconProvider::class);
+        return $provider->getAdmins($server->uuid);
+    }
+
+    /**
+     * Get all whitelisted players (for separate whitelist)
+     */
+    public function getWhitelistList(): array
+    {
+        $server = Filament::getTenant();
+        if (!$server) {
+            return [];
+        }
+
+        $provider = app(FactorioRconProvider::class);
+        return $provider->getWhitelist($server->uuid);
+    }
+
     public function promotePlayer(string $playerName): void
     {
         $server = Filament::getTenant();
