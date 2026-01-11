@@ -191,13 +191,13 @@
             </x-slot>
             
             <div class="overflow-x-auto">
-                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700" style="table-layout: fixed;">
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th style="width: 70%;" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.name') }}
                             </th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th style="width: 30%;" class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
@@ -205,7 +205,7 @@
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($admins as $admin)
                             <tr>
-                                <td class="px-4 py-3 whitespace-nowrap" style="width: 100%;">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $admin['name'] }}
                                     </span>
@@ -223,7 +223,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="2" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                                     {{ __('factorio-manager::messages.lists.no_admins') }}
                                 </td>
                             </tr>
@@ -247,20 +247,20 @@
             </x-slot>
             
             <div class="overflow-x-auto">
-                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700" style="table-layout: fixed;">
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th style="width: 70%;" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.name') }}
                             </th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th style="width: 30%;" class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($whitelisted as $player)
-                            <tr >
+                            <tr>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $player['name'] }}
