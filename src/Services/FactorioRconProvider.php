@@ -247,10 +247,23 @@ class FactorioRconProvider
     }
 
     /**
-     * Get whitelist
+     * Get whitelist - reads directly from server-whitelist.json file
+     * Falls back to RCON command if file doesn't exist
      */
     public function getWhitelist(string $serverId): array
     {
+        $server = Server::where('uuid', $serverId)->first();
+        if (!$server) {
+            return [];
+        }
+
+        // Try to read from file first (more reliable)
+        $whitelist = $this->getWhitelistFromFile($server);
+        if ($whitelist !== null) {
+            return $whitelist;
+        }
+
+        // Fallback to RCON
         $response = $this->sendRconCommand($serverId, '/whitelist get');
         
         if (!$response) {
@@ -258,6 +271,39 @@ class FactorioRconProvider
         }
 
         return $this->parseWhitelistResponse($response);
+    }
+
+    /**
+     * Read whitelist from server-whitelist.json file
+     */
+    private function getWhitelistFromFile(Server $server): ?array
+    {
+        try {
+            $fileRepository = (new DaemonFileRepository())->setServer($server);
+            
+            $paths = [
+                '/data/server-whitelist.json',
+                '/server-whitelist.json',
+            ];
+            
+            foreach ($paths as $path) {
+                try {
+                    $content = $fileRepository->getContent($path);
+                    $whitelist = json_decode($content, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($whitelist)) {
+                        // File contains array of player names (strings)
+                        return array_map(fn($name) => ['name' => $name], $whitelist);
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::debug("Could not read server-whitelist.json: " . $e->getMessage());
+        }
+
+        return null;
     }
 
     /**
@@ -330,10 +376,23 @@ class FactorioRconProvider
     }
 
     /**
-     * Get admins list
+     * Get admins list - reads directly from server-adminlist.json file
+     * Falls back to RCON command if file doesn't exist
      */
     public function getAdmins(string $serverId): array
     {
+        $server = Server::where('uuid', $serverId)->first();
+        if (!$server) {
+            return [];
+        }
+
+        // Try to read from file first (more reliable, case-preserving)
+        $admins = $this->getAdminsFromFile($server);
+        if ($admins !== null) {
+            return $admins;
+        }
+
+        // Fallback to RCON
         $response = $this->sendRconCommand($serverId, '/admins');
         
         if (!$response) {
@@ -341,6 +400,39 @@ class FactorioRconProvider
         }
 
         return $this->parseAdminsResponse($response);
+    }
+
+    /**
+     * Read admins from server-adminlist.json file
+     */
+    private function getAdminsFromFile(Server $server): ?array
+    {
+        try {
+            $fileRepository = (new DaemonFileRepository())->setServer($server);
+            
+            $paths = [
+                '/data/server-adminlist.json',
+                '/server-adminlist.json',
+            ];
+            
+            foreach ($paths as $path) {
+                try {
+                    $content = $fileRepository->getContent($path);
+                    $admins = json_decode($content, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($admins)) {
+                        // File contains array of player names (strings)
+                        return array_map(fn($name) => ['name' => $name], $admins);
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::debug("Could not read server-adminlist.json: " . $e->getMessage());
+        }
+
+        return null;
     }
 
     /**
