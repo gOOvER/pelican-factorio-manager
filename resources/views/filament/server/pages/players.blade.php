@@ -51,7 +51,7 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($players as $player)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <tr >
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $player['name'] }}
@@ -203,7 +203,7 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($admins as $admin)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <tr >
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $admin['name'] }}
@@ -259,7 +259,7 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($whitelisted as $player)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <tr >
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $player['name'] }}
