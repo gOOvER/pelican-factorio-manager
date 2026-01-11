@@ -183,10 +183,10 @@
         @endphp
         <x-filament::section>
             <x-slot name="heading">
-                <div class="flex items-center gap-2">
+                <div style="display: flex; align-items: center; gap: 8px;">
                     <x-filament::icon icon="tabler-shield-check" class="h-5 w-5 text-warning-500" />
                     {{ __('factorio-manager::messages.lists.admins') }}
-                    <span class="text-sm text-gray-500">({{ count($admins) }})</span>
+                    <span style="font-size: 14px; color: #6b7280;">({{ count($admins) }})</span>
                 </div>
             </x-slot>
             
@@ -197,7 +197,7 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.name') }}
                             </th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th style="width: 400px;" class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
@@ -210,17 +210,15 @@
                                         {{ $admin['name'] }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <div style="display: flex; justify-content: flex-end;">
-                                        <x-filament::button
-                                            x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.demote.confirm', ['name' => $admin['name']]) }}')) { $wire.demotePlayer('{{ $admin['name'] }}') }"
-                                            color="warning"
-                                            size="xs"
-                                            icon="tabler-shield-x"
-                                        >
-                                            {{ __('factorio-manager::messages.actions.demote.label') }}
-                                        </x-filament::button>
-                                    </div>
+                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                    <x-filament::button
+                                        x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.demote.confirm', ['name' => $admin['name']]) }}')) { $wire.demotePlayer('{{ $admin['name'] }}') }"
+                                        color="warning"
+                                        size="xs"
+                                        icon="tabler-shield-x"
+                                    >
+                                        {{ __('factorio-manager::messages.actions.demote.label') }}
+                                    </x-filament::button>
                                 </td>
                             </tr>
                         @empty
@@ -241,10 +239,10 @@
         @endphp
         <x-filament::section>
             <x-slot name="heading">
-                <div class="flex items-center gap-2">
+                <div style="display: flex; align-items: center; gap: 8px;">
                     <x-filament::icon icon="tabler-list-check" class="h-5 w-5 text-success-500" />
                     {{ __('factorio-manager::messages.lists.whitelist') }}
-                    <span class="text-sm text-gray-500">({{ count($whitelisted) }})</span>
+                    <span style="font-size: 14px; color: #6b7280;">({{ count($whitelisted) }})</span>
                 </div>
             </x-slot>
             
@@ -255,7 +253,7 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.name') }}
                             </th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th style="width: 400px;" class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
@@ -268,17 +266,15 @@
                                         {{ $player['name'] }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <div style="display: flex; justify-content: flex-end;">
-                                        <x-filament::button
-                                            x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.whitelist_remove.confirm', ['name' => $player['name']]) }}')) { $wire.whitelistRemove('{{ $player['name'] }}') }"
-                                            color="warning"
-                                            size="xs"
-                                            icon="tabler-list-details"
-                                        >
-                                            {{ __('factorio-manager::messages.actions.whitelist_remove.label') }}
-                                        </x-filament::button>
-                                    </div>
+                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                    <x-filament::button
+                                        x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.whitelist_remove.confirm', ['name' => $player['name']]) }}')) { $wire.whitelistRemove('{{ $player['name'] }}') }"
+                                        color="warning"
+                                        size="xs"
+                                        icon="tabler-list-details"
+                                    >
+                                        {{ __('factorio-manager::messages.actions.whitelist_remove.label') }}
+                                    </x-filament::button>
                                 </td>
                             </tr>
                         @empty
