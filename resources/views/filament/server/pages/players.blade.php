@@ -278,7 +278,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="2" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                                     {{ __('factorio-manager::messages.lists.no_whitelisted') }}
                                 </td>
                             </tr>

@@ -293,7 +293,14 @@ class FactorioRconProvider
                     
                     if (json_last_error() === JSON_ERROR_NONE && is_array($whitelist)) {
                         // File contains array of player names (strings)
-                        return array_map(fn($name) => ['name' => $name], $whitelist);
+                        // Filter out empty strings and ensure valid names
+                        $result = [];
+                        foreach ($whitelist as $name) {
+                            if (is_string($name) && !empty(trim($name))) {
+                                $result[] = ['name' => trim($name)];
+                            }
+                        }
+                        return $result;
                     }
                 } catch (\Exception $e) {
                     continue;
@@ -422,7 +429,14 @@ class FactorioRconProvider
                     
                     if (json_last_error() === JSON_ERROR_NONE && is_array($admins)) {
                         // File contains array of player names (strings)
-                        return array_map(fn($name) => ['name' => $name], $admins);
+                        // Filter out empty strings and ensure valid names
+                        $result = [];
+                        foreach ($admins as $name) {
+                            if (is_string($name) && !empty(trim($name))) {
+                                $result[] = ['name' => trim($name)];
+                            }
+                        }
+                        return $result;
                     }
                 } catch (\Exception $e) {
                     continue;
