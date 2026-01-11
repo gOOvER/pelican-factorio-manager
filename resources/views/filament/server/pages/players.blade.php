@@ -29,11 +29,11 @@
                 <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <colgroup>
                         <col>
-                        <col style="width: 80px;">
-                        <col style="width: 80px;">
-                        <col style="width: 80px;">
-                        <col style="width: 80px;">
-                        <col style="width: 380px;">
+                        <col style="width: 70px;">
+                        <col style="width: 70px;">
+                        <col style="width: 70px;">
+                        <col style="width: 70px;">
+                        <col style="width: 520px;">
                     </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
@@ -94,8 +94,8 @@
                                         <x-filament::icon icon="tabler-list" class="h-5 w-5 text-gray-400" />
                                     @endif
                                 </td>
-                                <td class="px-4 py-3">
-                                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
                                         {{-- Promote/Demote --}}
                                         @if($player['is_admin'])
                                             <x-filament::button
@@ -202,7 +202,7 @@
                 <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <colgroup>
                         <col>
-                        <col style="width: 380px;">
+                        <col style="width: 520px;">
                     </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
@@ -262,7 +262,7 @@
                 <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <colgroup>
                         <col>
-                        <col style="width: 380px;">
+                        <col style="width: 520px;">
                     </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
