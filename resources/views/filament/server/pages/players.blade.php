@@ -65,6 +65,7 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
+                                    {{-- Admin status icon: green=admin, red=not admin --}}
                                     @if($player['is_admin'])
                                         <x-filament::icon icon="tabler-shield-check" class="h-5 w-5 text-success-500" />
                                     @else
