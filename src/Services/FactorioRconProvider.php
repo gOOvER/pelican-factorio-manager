@@ -669,10 +669,11 @@ class FactorioRconProvider
 
     /**
      * Parse whitelist response
-     * Factorio /whitelist get output format:
+     * Factorio /whitelist get output formats:
      * "Whitelisted players (2):"
      * "  PlayerName"
-     * or just player names per line
+     * OR: "Whitelisted players: PlayerName, Player2"
+     * OR just player names per line
      */
     private function parseWhitelistResponse(?string $response): array
     {
@@ -688,7 +689,19 @@ class FactorioRconProvider
             if (empty($line)) continue;
             
             // Skip header line like "Whitelisted players (2):"
-            if (preg_match('/^Whitelisted\s+players?\s*\(\d+\)\s*:?$/i', $line)) {
+            if (preg_match('/^Whitelisted\s+players?\s*\(\d+\)\s*:?\s*$/i', $line)) {
+                continue;
+            }
+            
+            // Handle "Whitelisted players: Name1, Name2" format
+            if (preg_match('/^Whitelisted\s+players?\s*:\s*(.+)$/i', $line, $matches)) {
+                $names = preg_split('/[,\s]+/', trim($matches[1]));
+                foreach ($names as $name) {
+                    $name = trim($name);
+                    if (!empty($name)) {
+                        $whitelisted[] = ['name' => $name];
+                    }
+                }
                 continue;
             }
             
