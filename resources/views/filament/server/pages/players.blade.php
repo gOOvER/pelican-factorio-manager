@@ -26,7 +26,15 @@
         {{-- Table --}}
         <x-filament::section>
             <div class="overflow-x-auto">
-                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <colgroup>
+                        <col style="width: calc(100% - 450px);">
+                        <col style="width: 70px;">
+                        <col style="width: 70px;">
+                        <col style="width: 70px;">
+                        <col style="width: 70px;">
+                        <col style="width: 450px;">
+                    </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -44,14 +52,14 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.whitelist') }}
                             </th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($players as $player)
-                            <tr >
+                            <tr>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $player['name'] }}
@@ -86,8 +94,8 @@
                                         <x-filament::icon icon="tabler-list" class="h-5 w-5 text-gray-400" />
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-right">
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
                                         {{-- Promote/Demote --}}
                                         @if($player['is_admin'])
                                             <x-filament::button
@@ -191,13 +199,17 @@
             </x-slot>
             
             <div class="overflow-x-auto">
-                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <colgroup>
+                        <col style="width: calc(100% - 450px);">
+                        <col style="width: 450px;">
+                    </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.name') }}
                             </th>
-                            <th style="width: 400px;" class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
@@ -210,7 +222,7 @@
                                         {{ $admin['name'] }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <x-filament::button
                                         x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.demote.confirm', ['name' => $admin['name']]) }}')) { $wire.demotePlayer('{{ $admin['name'] }}') }"
                                         color="warning"
@@ -247,13 +259,17 @@
             </x-slot>
             
             <div class="overflow-x-auto">
-                <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table style="width: 100%; table-layout: fixed;" class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <colgroup>
+                        <col style="width: calc(100% - 450px);">
+                        <col style="width: 450px;">
+                    </colgroup>
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.columns.name') }}
                             </th>
-                            <th style="width: 400px;" class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
@@ -266,7 +282,7 @@
                                         {{ $player['name'] }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-right">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <x-filament::button
                                         x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.whitelist_remove.confirm', ['name' => $player['name']]) }}')) { $wire.whitelistRemove('{{ $player['name'] }}') }"
                                         color="warning"
