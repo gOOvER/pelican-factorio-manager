@@ -106,6 +106,7 @@ class Players extends Page implements HasForms
 
     /**
      * Get all admins (for separate admin list)
+     * Uses correct case from player list
      */
     public function getAdminList(): array
     {
@@ -115,11 +116,27 @@ class Players extends Page implements HasForms
         }
 
         $provider = app(FactorioRconProvider::class);
-        return $provider->getAdmins($server->uuid);
+        $admins = $provider->getAdmins($server->uuid);
+        $allPlayers = $provider->getAllPlayers($server->uuid);
+        
+        // Build case-correct name map from player list
+        $correctNames = [];
+        foreach ($allPlayers as $player) {
+            $correctNames[strtolower($player['name'])] = $player['name'];
+        }
+        
+        // Return admins with correct case names
+        return array_map(function ($admin) use ($correctNames) {
+            $lowerName = strtolower($admin['name']);
+            return [
+                'name' => $correctNames[$lowerName] ?? $admin['name']
+            ];
+        }, $admins);
     }
 
     /**
      * Get all whitelisted players (for separate whitelist)
+     * Uses correct case from player list
      */
     public function getWhitelistList(): array
     {
@@ -129,7 +146,22 @@ class Players extends Page implements HasForms
         }
 
         $provider = app(FactorioRconProvider::class);
-        return $provider->getWhitelist($server->uuid);
+        $whitelist = $provider->getWhitelist($server->uuid);
+        $allPlayers = $provider->getAllPlayers($server->uuid);
+        
+        // Build case-correct name map from player list
+        $correctNames = [];
+        foreach ($allPlayers as $player) {
+            $correctNames[strtolower($player['name'])] = $player['name'];
+        }
+        
+        // Return whitelist with correct case names
+        return array_map(function ($player) use ($correctNames) {
+            $lowerName = strtolower($player['name']);
+            return [
+                'name' => $correctNames[$lowerName] ?? $player['name']
+            ];
+        }, $whitelist);
     }
 
     public function promotePlayer(string $playerName): void
