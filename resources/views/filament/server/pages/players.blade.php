@@ -94,8 +94,8 @@
                                         <x-filament::icon icon="tabler-list" class="h-5 w-5 text-gray-400" />
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                <td class="px-4 py-3">
+                                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                         {{-- Promote/Demote --}}
                                         @if($player['is_admin'])
                                             <x-filament::button
