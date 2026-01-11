@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Real-time player list with online/offline status
 - Player management (kick, ban, unban, promote, demote)
 - **Whitelist management** - Add/remove players from server whitelist
+- **Server Admins table** - Separate list of all server admins with quick remove action
+- **Whitelisted Players table** - Separate list of all whitelisted players with quick remove action
 - In-game chat widget with message sending
 - Server status widget showing online players and RCON connection
 - Chat history support via Pelican Chat Logger mod
