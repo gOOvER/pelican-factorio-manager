@@ -14,6 +14,7 @@
                     <option value="offline">{{ __('factorio-manager::messages.filters.offline') }}</option>
                     <option value="admin">{{ __('factorio-manager::messages.filters.admin') }}</option>
                     <option value="banned">{{ __('factorio-manager::messages.filters.banned') }}</option>
+                    <option value="whitelisted">{{ __('factorio-manager::messages.filters.whitelisted') }}</option>
                 </x-filament::input.select>
             </x-filament::input.wrapper>
             
@@ -39,6 +40,9 @@
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.filters.banned') }}
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {{ __('factorio-manager::messages.columns.whitelist') }}
                             </th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {{ __('factorio-manager::messages.sections.management') }}
@@ -72,6 +76,13 @@
                                         <x-filament::icon icon="tabler-ban" class="h-5 w-5 text-danger-500" />
                                     @else
                                         <x-filament::icon icon="tabler-circle-check" class="h-5 w-5 text-success-500" />
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    @if($player['is_whitelisted'])
+                                        <x-filament::icon icon="tabler-list-check" class="h-5 w-5 text-success-500" />
+                                    @else
+                                        <x-filament::icon icon="tabler-list" class="h-5 w-5 text-gray-400" />
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-right">
@@ -129,12 +140,33 @@
                                                 {{ __('factorio-manager::messages.actions.ban.label') }}
                                             </x-filament::button>
                                         @endif
+
+                                        {{-- Whitelist Add/Remove --}}
+                                        @if($player['is_whitelisted'])
+                                            <x-filament::button
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.whitelist_remove.confirm', ['name' => $player['name']]) }}')) { $wire.whitelistRemove('{{ $player['name'] }}') }"
+                                                color="warning"
+                                                size="xs"
+                                                icon="tabler-list-details"
+                                            >
+                                                {{ __('factorio-manager::messages.actions.whitelist_remove.label') }}
+                                            </x-filament::button>
+                                        @else
+                                            <x-filament::button
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.whitelist_add.confirm', ['name' => $player['name']]) }}')) { $wire.whitelistAdd('{{ $player['name'] }}') }"
+                                                color="gray"
+                                                size="xs"
+                                                icon="tabler-list-check"
+                                            >
+                                                {{ __('factorio-manager::messages.actions.whitelist_add.label') }}
+                                            </x-filament::button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                                     {{ __('factorio-manager::messages.values.no_players') }}
                                 </td>
                             </tr>

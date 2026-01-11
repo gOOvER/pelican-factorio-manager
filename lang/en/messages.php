@@ -9,6 +9,7 @@ return [
         'online' => 'Online',
         'offline' => 'Offline',
         'admin' => 'Admin',
+        'whitelist' => 'Whitelist',
     ],
 
     'filters' => [
@@ -17,6 +18,7 @@ return [
         'offline' => 'Offline',
         'admin' => 'Admins',
         'banned' => 'Banned',
+        'whitelisted' => 'Whitelisted',
     ],
 
     'sections' => [
@@ -61,6 +63,16 @@ return [
             'label' => 'Remove Admin',
             'notify' => 'Admin rights removed',
             'confirm' => 'Are you sure you want to remove admin rights from :name?',
+        ],
+        'whitelist_add' => [
+            'label' => 'Add to Whitelist',
+            'notify' => 'Player added to whitelist',
+            'confirm' => 'Are you sure you want to add :name to the whitelist?',
+        ],
+        'whitelist_remove' => [
+            'label' => 'Remove from Whitelist',
+            'notify' => 'Player removed from whitelist',
+            'confirm' => 'Are you sure you want to remove :name from the whitelist?',
         ],
         'message' => [
             'label' => 'Send Message',

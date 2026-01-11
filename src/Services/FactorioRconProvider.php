@@ -231,6 +231,91 @@ class FactorioRconProvider
     }
 
     /**
+     * Add player to whitelist
+     */
+    public function whitelistAdd(string $serverId, string $playerName): bool
+    {
+        return $this->sendRconCommand($serverId, "/whitelist add $playerName") !== null;
+    }
+
+    /**
+     * Remove player from whitelist
+     */
+    public function whitelistRemove(string $serverId, string $playerName): bool
+    {
+        return $this->sendRconCommand($serverId, "/whitelist remove $playerName") !== null;
+    }
+
+    /**
+     * Get whitelist
+     */
+    public function getWhitelist(string $serverId): array
+    {
+        $response = $this->sendRconCommand($serverId, '/whitelist get');
+        
+        if (!$response) {
+            return [];
+        }
+
+        return $this->parseWhitelistResponse($response);
+    }
+
+    /**
+     * Enable whitelist
+     */
+    public function whitelistEnable(string $serverId): bool
+    {
+        return $this->sendRconCommand($serverId, '/whitelist enable') !== null;
+    }
+
+    /**
+     * Disable whitelist
+     */
+    public function whitelistDisable(string $serverId): bool
+    {
+        return $this->sendRconCommand($serverId, '/whitelist disable') !== null;
+    }
+
+    /**
+     * Check if whitelist is enabled by reading server-settings.json
+     */
+    public function isWhitelistEnabled(string $serverId): bool
+    {
+        $server = Server::where('uuid', $serverId)->first();
+        if (!$server) {
+            return false;
+        }
+
+        try {
+            $fileRepository = (new DaemonFileRepository())->setServer($server);
+            
+            $paths = [
+                '/data/server-settings.json',
+                '/server-settings.json',
+            ];
+            
+            foreach ($paths as $path) {
+                try {
+                    $content = $fileRepository->getContent($path);
+                    $settings = json_decode($content, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && isset($settings['only_admins_can_pause_the_game'])) {
+                        // Check for use_only_whitelist setting
+                        return (bool) ($settings['only_admins_can_pause_the_game'] ?? false) === false 
+                            && (bool) ($settings['visibility']['public'] ?? true) === false;
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::debug("Could not check whitelist status: " . $e->getMessage());
+        }
+
+        return false;
+    }
+
+    /**
      * Get banned players list
      */
     public function getBannedPlayers(string $serverId): array
@@ -474,6 +559,50 @@ class FactorioRconProvider
         Log::debug("Parsed admins from response: " . json_encode($admins) . " | Raw: " . $response);
 
         return $admins;
+    }
+
+    /**
+     * Parse whitelist response
+     * Factorio /whitelist get output format:
+     * "Whitelisted players (2):"
+     * "  PlayerName"
+     * or just player names per line
+     */
+    private function parseWhitelistResponse(?string $response): array
+    {
+        if (!$response) {
+            return [];
+        }
+
+        $whitelisted = [];
+        $lines = explode("\n", trim($response));
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            
+            // Skip header line like "Whitelisted players (2):"
+            if (preg_match('/^Whitelisted\s+players?\s*\(\d+\)\s*:?$/i', $line)) {
+                continue;
+            }
+            
+            // Skip "No whitelisted players" or similar
+            if (preg_match('/^(No whitelisted|Whitelist is empty)/i', $line)) {
+                continue;
+            }
+            
+            // Remove leading whitespace/bullets
+            $name = ltrim($line, " \t-*•");
+            $name = trim($name);
+            
+            if (!empty($name) && strlen($name) < 100) {
+                $whitelisted[] = [
+                    'name' => $name
+                ];
+            }
+        }
+
+        return $whitelisted;
     }
 
     /**

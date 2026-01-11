@@ -70,6 +70,10 @@ class Players extends Page implements HasForms
         // Case-insensitive admin names (lowercase for comparison)
         $adminNames = array_map('strtolower', array_column($admins, 'name'));
         
+        // Get whitelist
+        $whitelist = $provider->getWhitelist($serverId);
+        $whitelistNames = array_map('strtolower', array_column($whitelist, 'name'));
+        
         $bannedData = [];
         foreach ($banned as $b) {
             $bannedData[strtolower($b['name'])] = $b['reason'] ?? '';
@@ -85,6 +89,7 @@ class Players extends Page implements HasForms
                 'is_admin' => in_array($playerNameLower, $adminNames, true),
                 'is_banned' => isset($bannedData[$playerNameLower]),
                 'ban_reason' => $bannedData[$playerNameLower] ?? '',
+                'is_whitelisted' => in_array($playerNameLower, $whitelistNames, true),
             ];
         }
 
@@ -94,6 +99,7 @@ class Players extends Page implements HasForms
             'offline' => array_values(array_filter($players, fn ($p) => $p['online'] === false)),
             'admin' => array_values(array_filter($players, fn ($p) => $p['is_admin'] === true)),
             'banned' => array_values(array_filter($players, fn ($p) => $p['is_banned'] === true)),
+            'whitelisted' => array_values(array_filter($players, fn ($p) => $p['is_whitelisted'] === true)),
             default => $players,
         };
     }
@@ -180,6 +186,38 @@ class Players extends Page implements HasForms
             ->send();
         
         // Refresh the component to update the player list
+        $this->dispatch('$refresh');
+    }
+
+    public function whitelistAdd(string $playerName): void
+    {
+        $server = Filament::getTenant();
+        if (!$server) return;
+
+        $provider = app(FactorioRconProvider::class);
+        $provider->whitelistAdd($server->uuid, $playerName);
+        
+        Notification::make()
+            ->title(__('factorio-manager::messages.actions.whitelist_add.notify'))
+            ->success()
+            ->send();
+        
+        $this->dispatch('$refresh');
+    }
+
+    public function whitelistRemove(string $playerName): void
+    {
+        $server = Filament::getTenant();
+        if (!$server) return;
+
+        $provider = app(FactorioRconProvider::class);
+        $provider->whitelistRemove($server->uuid, $playerName);
+        
+        Notification::make()
+            ->title(__('factorio-manager::messages.actions.whitelist_remove.notify'))
+            ->success()
+            ->send();
+        
         $this->dispatch('$refresh');
     }
 }
