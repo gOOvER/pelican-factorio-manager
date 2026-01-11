@@ -204,8 +204,8 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($admins as $admin)
-                            <tr >
-                                <td class="px-4 py-3 whitespace-nowrap">
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap" style="width: 100%;">
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $admin['name'] }}
                                     </span>
