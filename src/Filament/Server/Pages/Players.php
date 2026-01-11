@@ -74,10 +74,6 @@ class Players extends Page implements HasForms
         $whitelist = $provider->getWhitelist($serverId);
         $whitelistNames = array_map('strtolower', array_column($whitelist, 'name'));
         
-        // Debug logging
-        \Illuminate\Support\Facades\Log::debug("Factorio Admin names: " . json_encode($adminNames));
-        \Illuminate\Support\Facades\Log::debug("Factorio Whitelist names: " . json_encode($whitelistNames));
-        
         $bannedData = [];
         foreach ($banned as $b) {
             $bannedData[strtolower($b['name'])] = $b['reason'] ?? '';
