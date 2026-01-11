@@ -1,15 +1,18 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Filament\Server\Widgets;
+namespace gOOvER\FactorioManager\Filament\Server\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Facades\Filament;
-use gOOvER\FactorioRcon\Services\FactorioRconProvider;
-use gOOvER\FactorioRcon\Helpers\VisibilityHelper;
+use gOOvER\FactorioManager\Services\FactorioRconProvider;
+use gOOvER\FactorioManager\Helpers\VisibilityHelper;
 
 class OnlinePlayersWidget extends BaseWidget
 {
+    // Auto-refresh every 10 seconds
+    protected ?string $pollingInterval = '10s';
+
     protected function getStats(): array
     {
         $server = Filament::getTenant();
@@ -17,7 +20,7 @@ class OnlinePlayersWidget extends BaseWidget
             return [];
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         $status = $provider->getServerStatus($server->uuid);
 
         $onlineCount = 0;
@@ -26,9 +29,9 @@ class OnlinePlayersWidget extends BaseWidget
         }
 
         return [
-            Stat::make(__('factorio-rcon::messages.widget.online_players'), $onlineCount)
-                ->description(__('factorio-rcon::messages.widget.server_status') . ': ' . 
-                    ($status['online'] ? __('factorio-rcon::messages.values.online') : __('factorio-rcon::messages.values.offline')))
+            Stat::make(__('factorio-manager::messages.widget.online_players'), $onlineCount)
+                ->description(__('factorio-manager::messages.widget.server_status') . ': ' . 
+                    ($status['online'] ? __('factorio-manager::messages.values.online') : __('factorio-manager::messages.values.offline')))
                 ->color($status['online'] ? 'success' : 'danger')
                 ->icon('heroicon-o-users'),
         ];

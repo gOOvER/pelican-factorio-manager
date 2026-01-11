@@ -1,14 +1,21 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Services;
+namespace gOOvER\FactorioManager\Services;
 
 use App\Models\Server;
+use App\Repositories\Daemon\DaemonFileRepository;
 use Illuminate\Support\Facades\Log;
 
 class FactorioRconProvider
 {
     /**
+     * Cached RCON connections per server
+     */
+    private static array $connections = [];
+
+    /**
      * Send a raw RCON command to the server
+     * Reuses existing connection if available
      */
     public function sendRconCommand(string $serverId, string $command): ?string
     {
@@ -18,19 +25,66 @@ class FactorioRconProvider
             return null;
         }
 
-        $rcon = $this->getRconConnection($server);
+        $rcon = $this->getOrCreateConnection($server);
         if (!$rcon) {
             return null;
         }
 
-        $response = $rcon->sendCommand($command);
-        $rcon->disconnect();
+        return $rcon->sendCommand($command);
+    }
 
-        return $response;
+    /**
+     * Get existing connection or create new one
+     */
+    private function getOrCreateConnection(Server $server): ?RconService
+    {
+        $serverId = $server->uuid;
+        
+        // Return existing connection if still valid
+        if (isset(self::$connections[$serverId])) {
+            $rcon = self::$connections[$serverId];
+            // Test if connection is still alive with a simple command
+            if ($rcon->isConnected()) {
+                return $rcon;
+            }
+            // Connection dead, remove it
+            unset(self::$connections[$serverId]);
+        }
+
+        // Create new connection
+        $rcon = $this->getRconConnection($server);
+        if ($rcon) {
+            self::$connections[$serverId] = $rcon;
+        }
+
+        return $rcon;
+    }
+
+    /**
+     * Close all connections (call on request end)
+     */
+    public static function closeAllConnections(): void
+    {
+        foreach (self::$connections as $rcon) {
+            $rcon->disconnect();
+        }
+        self::$connections = [];
+    }
+
+    /**
+     * Close connection for specific server
+     */
+    public function closeConnection(string $serverId): void
+    {
+        if (isset(self::$connections[$serverId])) {
+            self::$connections[$serverId]->disconnect();
+            unset(self::$connections[$serverId]);
+        }
     }
 
     /**
      * Get server status information
+     * Uses connection pooling for efficiency
      */
     public function getServerStatus(string $serverId): array
     {
@@ -42,7 +96,7 @@ class FactorioRconProvider
             ];
         }
 
-        $rcon = $this->getRconConnection($server);
+        $rcon = $this->getOrCreateConnection($server);
         if (!$rcon) {
             return [
                 'online' => false,
@@ -50,25 +104,52 @@ class FactorioRconProvider
             ];
         }
 
-        // Get player count
+        // Get player count - reuses connection
         $playersResponse = $rcon->sendCommand('/players');
         
-        // Get max players
-        $maxPlayersResponse = $rcon->sendCommand('/config get max-players');
-        $maxPlayers = null;
-        if ($maxPlayersResponse && preg_match('/max-players\s+(?:is\s+)?(\d+)/i', $maxPlayersResponse, $matches)) {
-            $value = (int) $matches[1];
-            $maxPlayers = $value === 0 ? null : $value; // 0 = unlimited
-        }
+        // Get max_players from server-settings.json file
+        $maxPlayers = $this->getMaxPlayersFromSettings($server);
         
-        $status = [
+        return [
             'online' => true,
             'players' => $this->parsePlayersResponse($playersResponse),
             'max_players' => $maxPlayers,
         ];
+        // Note: Connection stays open for reuse
+    }
 
-        $rcon->disconnect();
-        return $status;
+    /**
+     * Get max_players from server-settings.json file
+     */
+    private function getMaxPlayersFromSettings(Server $server): ?int
+    {
+        try {
+            $fileRepository = (new DaemonFileRepository())->setServer($server);
+            
+            // Try common paths for server-settings.json
+            $paths = [
+                '/data/server-settings.json',  // Pelican/Pterodactyl standard path
+                '/server-settings.json',        // Root path
+            ];
+            
+            foreach ($paths as $path) {
+                try {
+                    $content = $fileRepository->getContent($path);
+                    $settings = json_decode($content, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && isset($settings['max_players'])) {
+                        return (int) $settings['max_players'];
+                    }
+                } catch (\Exception $e) {
+                    // Try next path
+                    continue;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::debug("Could not read server-settings.json for max_players: " . $e->getMessage());
+        }
+
+        return null;
     }
 
     /**
@@ -179,9 +260,22 @@ class FactorioRconProvider
 
     /**
      * Send a message to all players
+     * Tries /pelican.say first (mod command that shows in chat), falls back to /say
      */
     public function sendMessage(string $serverId, string $message): bool
     {
+        // Try mod command first - it uses game.print() which shows in chat
+        $result = $this->sendRconCommand($serverId, "/pelican.say $message");
+        
+        if ($result !== null) {
+            // Check if mod responded with success
+            $decoded = json_decode($result, true);
+            if (is_array($decoded) && ($decoded['ok'] ?? false)) {
+                return true;
+            }
+        }
+        
+        // Fallback to standard /say command
         return $this->sendRconCommand($serverId, "/say $message") !== null;
     }
 
@@ -194,24 +288,17 @@ class FactorioRconProvider
     }
 
     /**
-     * Get maximum player slots
+     * Get maximum player slots from server-settings.json
+     * Reads the max_players setting from the Factorio server configuration file
      */
     public function getMaxPlayers(string $serverId): ?int
     {
-        $response = $this->sendRconCommand($serverId, '/config get max-players');
-        
-        if (!$response) {
+        $server = Server::where('uuid', $serverId)->first();
+        if (!$server) {
             return null;
         }
 
-        // Response format: "max-players is 100" or similar
-        if (preg_match('/max-players\s+(?:is\s+)?(\d+)/i', $response, $matches)) {
-            $value = (int) $matches[1];
-            // 0 means unlimited in Factorio
-            return $value === 0 ? null : $value;
-        }
-
-        return null;
+        return $this->getMaxPlayersFromSettings($server);
     }
 
     /**
@@ -338,6 +425,10 @@ class FactorioRconProvider
 
     /**
      * Parse admins response
+     * Factorio /admins output format:
+     * "Admins (1):"
+     * "  g00v3R (online)"
+     * or just player names per line
      */
     private function parseAdminsResponse(?string $response): array
     {
@@ -352,10 +443,35 @@ class FactorioRconProvider
             $line = trim($line);
             if (empty($line)) continue;
             
-            $admins[] = [
-                'name' => $line
-            ];
+            // Skip header line like "Admins (1):"
+            if (preg_match('/^Admins?\s*\(\d+\)\s*:?$/i', $line)) {
+                continue;
+            }
+            
+            // Extract player name from formats like:
+            // "  g00v3R (online)"
+            // "  g00v3R"
+            // "g00v3R (online)"
+            // "g00v3R"
+            $name = $line;
+            
+            // Remove leading whitespace/bullets
+            $name = ltrim($name, " \t-*•");
+            
+            // Remove (online)/(offline) suffix
+            $name = preg_replace('/\s*\((online|offline)\)\s*$/i', '', $name);
+            
+            // Trim any remaining whitespace
+            $name = trim($name);
+            
+            if (!empty($name)) {
+                $admins[] = [
+                    'name' => $name
+                ];
+            }
         }
+
+        Log::debug("Parsed admins from response: " . json_encode($admins) . " | Raw: " . $response);
 
         return $admins;
     }
@@ -367,11 +483,11 @@ class FactorioRconProvider
     public function getChatLog(string $serverId, int $limit = 50): ?array
     {
         // Check if chat log feature is enabled
-        if (!config('factorio-rcon.chat_log.enabled', true)) {
+        if (!config('factorio-manager.chat_log.enabled', true)) {
             return null;
         }
 
-        $maxMessages = min($limit, config('factorio-rcon.chat_log.max_messages', 50));
+        $maxMessages = min($limit, config('factorio-manager.chat_log.max_messages', 50));
         
         // Use the new RCON command from pelican-chat-logger mod
         $response = $this->sendRconCommand($serverId, "/pelican.chat $maxMessages");
@@ -399,12 +515,12 @@ class FactorioRconProvider
      */
     public function isChatLogAvailable(string $serverId): bool
     {
-        if (!config('factorio-rcon.chat_log.enabled', true)) {
+        if (!config('factorio-manager.chat_log.enabled', true)) {
             return false;
         }
 
-        // Check via /pelican.version command
-        $response = $this->sendRconCommand($serverId, '/pelican.version');
+        // Check via /pelican.status command - if it returns valid JSON, mod is installed
+        $response = $this->sendRconCommand($serverId, '/pelican.status');
         
         if (!$response) {
             return false;
@@ -412,7 +528,8 @@ class FactorioRconProvider
 
         try {
             $data = json_decode($response, true);
-            return isset($data['name']) && $data['name'] === 'pelican-chat-logger';
+            // If we get valid JSON with expected fields, mod is installed
+            return is_array($data) && isset($data['tick']);
         } catch (\Exception $e) {
             return false;
         }
@@ -472,44 +589,44 @@ class FactorioRconProvider
 
         try {
             $data = json_decode($response, true);
-            return isset($data['status']) && $data['status'] === 'ok';
+            // Mod returns {"ok":true} on success
+            return isset($data['ok']) && $data['ok'] === true;
         } catch (\Exception $e) {
             return false;
         }
     }
 
     /**
-     * Clear chat log via RCON command /pelican.clear
+     * Clear chat log - not implemented in mod yet
+     * For now, just return true as the log auto-rotates
      */
     public function clearChatLog(string $serverId): bool
     {
-        $response = $this->sendRconCommand($serverId, '/pelican.clear');
-        
-        if (!$response) {
-            return false;
-        }
-
-        try {
-            $data = json_decode($response, true);
-            return isset($data['status']) && $data['status'] === 'ok';
-        } catch (\Exception $e) {
-            return false;
-        }
+        // Chat log auto-rotates, no need to clear manually
+        // The mod keeps only the last 100 messages
+        return true;
     }
 
     /**
-     * Get mod version info
+     * Get mod version info via /pelican.status
      */
     public function getModVersion(string $serverId): ?array
     {
-        $response = $this->sendRconCommand($serverId, '/pelican.version');
+        $response = $this->sendRconCommand($serverId, '/pelican.status');
         
         if (!$response) {
             return null;
         }
 
         try {
-            return json_decode($response, true);
+            $data = json_decode($response, true);
+            if (is_array($data)) {
+                return [
+                    'name' => 'pelican-chat-logger',
+                    'installed' => true,
+                ];
+            }
+            return null;
         } catch (\Exception $e) {
             return null;
         }

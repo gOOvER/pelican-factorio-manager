@@ -4,10 +4,10 @@
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
             </svg>
-            {{ __('factorio-rcon::messages.chat.title') }}
+            {{ __('factorio-manager::messages.chat.title') }}
         </h3>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {{ __('factorio-rcon::messages.chat.description') }}
+            {{ __('factorio-manager::messages.chat.description') }}
         </p>
     </div>
 
@@ -15,14 +15,14 @@
         <!-- Empfänger Auswahl -->
         <div>
             <label for="recipient" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {{ __('factorio-rcon::messages.chat.recipient') }}
+                {{ __('factorio-manager::messages.chat.recipient') }}
             </label>
             <select 
                 wire:model="recipient" 
                 id="recipient"
                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
             >
-                <option value="all">{{ __('factorio-rcon::messages.chat.all_players') }}</option>
+                <option value="all">{{ __('factorio-manager::messages.chat.all_players') }}</option>
                 @foreach($this->getOnlinePlayers() as $player)
                     <option value="{{ $player['name'] }}">{{ $player['name'] }}</option>
                 @endforeach
@@ -32,14 +32,14 @@
         <!-- Nachricht Eingabe -->
         <div>
             <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {{ __('factorio-rcon::messages.chat.message') }}
+                {{ __('factorio-manager::messages.chat.message') }}
             </label>
             <div class="flex space-x-2">
                 <input 
                     type="text" 
                     wire:model="message" 
                     id="message"
-                    placeholder="{{ __('factorio-rcon::messages.chat.message_placeholder') }}"
+                    placeholder="{{ __('factorio-manager::messages.chat.message_placeholder') }}"
                     class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     maxlength="255"
                 />
@@ -50,7 +50,7 @@
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                     </svg>
-                    {{ __('factorio-rcon::messages.chat.send') }}
+                    {{ __('factorio-manager::messages.chat.send') }}
                 </button>
             </div>
         </div>
@@ -63,7 +63,7 @@
                 </svg>
                 <div class="ml-3">
                     <p class="text-sm text-blue-700 dark:text-blue-300">
-                        {{ __('factorio-rcon::messages.chat.info') }}
+                        {{ __('factorio-manager::messages.chat.info') }}
                     </p>
                 </div>
             </div>
@@ -73,14 +73,14 @@
     <!-- Schnellnachrichten -->
     <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
         <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            {{ __('factorio-rcon::messages.chat.quick_messages') }}
+            {{ __('factorio-manager::messages.chat.quick_messages') }}
         </h4>
         <div class="grid grid-cols-2 gap-2">
             @foreach([
-                'welcome' => __('factorio-rcon::messages.chat.quick.welcome'),
-                'maintenance' => __('factorio-rcon::messages.chat.quick.maintenance'),
-                'restart' => __('factorio-rcon::messages.chat.quick.restart'),
-                'backup' => __('factorio-rcon::messages.chat.quick.backup'),
+                'welcome' => __('factorio-manager::messages.chat.quick.welcome'),
+                'maintenance' => __('factorio-manager::messages.chat.quick.maintenance'),
+                'restart' => __('factorio-manager::messages.chat.quick.restart'),
+                'backup' => __('factorio-manager::messages.chat.quick.backup'),
             ] as $key => $text)
                 <button 
                     type="button"

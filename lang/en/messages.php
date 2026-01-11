@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'navigation_label' => 'Factorio RCON',
+    'navigation_label' => 'Players',
     
     'columns' => [
         'name' => 'Player Name',
@@ -38,24 +38,29 @@ return [
             'reason' => 'Reason',
             'default_reason' => 'Kicked by administrator',
             'notify' => 'Kick command sent',
+            'confirm' => 'Are you sure you want to kick :name?',
         ],
         'ban' => [
             'label' => 'Ban',
             'reason' => 'Reason',
             'default_reason' => 'Banned by administrator',
             'notify' => 'Ban command sent',
+            'confirm' => 'Are you sure you want to ban :name?',
         ],
         'unban' => [
             'label' => 'Unban',
             'notify' => 'Unban command sent',
+            'confirm' => 'Are you sure you want to unban :name?',
         ],
         'promote' => [
             'label' => 'Promote to Admin',
             'notify' => 'Player promoted to admin',
+            'confirm' => 'Are you sure you want to promote :name to admin?',
         ],
         'demote' => [
             'label' => 'Remove Admin',
             'notify' => 'Admin rights removed',
+            'confirm' => 'Are you sure you want to remove admin rights from :name?',
         ],
         'message' => [
             'label' => 'Send Message',
@@ -82,6 +87,7 @@ return [
         'connected' => 'Connected',
         'disconnected' => 'Disconnected',
         'none' => 'None',
+        'no_players' => 'No players found',
     ],
 
     'settings' => [

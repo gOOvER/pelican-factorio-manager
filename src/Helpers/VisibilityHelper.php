@@ -1,6 +1,6 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Helpers;
+namespace gOOvER\FactorioManager\Helpers;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Log;

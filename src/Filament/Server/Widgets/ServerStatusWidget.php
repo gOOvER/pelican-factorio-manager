@@ -1,17 +1,20 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Filament\Server\Widgets;
+namespace gOOvER\FactorioManager\Filament\Server\Widgets;
 
 use Filament\Widgets\Widget;
 use Filament\Facades\Filament;
-use gOOvER\FactorioRcon\Services\FactorioRconProvider;
-use gOOvER\FactorioRcon\Helpers\VisibilityHelper;
+use gOOvER\FactorioManager\Services\FactorioRconProvider;
+use gOOvER\FactorioManager\Helpers\VisibilityHelper;
 
 class ServerStatusWidget extends Widget
 {
-    protected string $view = 'factorio-rcon::filament.server.widgets.server-status';
+    protected string $view = 'factorio-manager::filament.server.widgets.server-status';
 
     protected int | string | array $columnSpan = 'full';
+
+    // Auto-refresh every 10 seconds
+    protected ?string $pollingInterval = '10s';
 
     public function getServerStatus(): array
     {
@@ -24,7 +27,7 @@ class ServerStatusWidget extends Widget
             ];
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         return $provider->getServerStatus($server->uuid);
     }
 

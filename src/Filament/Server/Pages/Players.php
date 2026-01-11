@@ -1,6 +1,6 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Filament\Server\Pages;
+namespace gOOvER\FactorioManager\Filament\Server\Pages;
 
 use Filament\Pages\Page;
 use Filament\Actions\Action;
@@ -10,8 +10,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Facades\Filament;
-use gOOvER\FactorioRcon\Helpers\VisibilityHelper;
-use gOOvER\FactorioRcon\Services\FactorioRconProvider;
+use gOOvER\FactorioManager\Helpers\VisibilityHelper;
+use gOOvER\FactorioManager\Services\FactorioRconProvider;
 
 class Players extends Page implements HasForms
 {
@@ -19,25 +19,22 @@ class Players extends Page implements HasForms
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
 
-    protected static string $view = 'factorio-rcon::filament.server.pages.players';
+    protected string $view = 'factorio-manager::filament.server.pages.players';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Factorio';
 
     public string $statusFilter = 'online';
 
     public static function getNavigationLabel(): string
     {
-        return __('factorio-rcon::messages.navigation_label');
-    }
-
-    public static function getNavigationSort(): int
-    {
-        return (int) env('FACTORIO_RCON_NAV_SORT', 2);
+        return __('factorio-manager::messages.navigation_label');
     }
 
     public function getTitle(): string
     {
-        return __('factorio-rcon::messages.pages.list');
+        return __('factorio-manager::messages.pages.list');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -49,7 +46,7 @@ class Players extends Page implements HasForms
     {
         return [
             Action::make('refresh')
-                ->label(__('factorio-rcon::messages.actions.refresh'))
+                ->label(__('factorio-manager::messages.actions.refresh'))
                 ->icon('tabler-refresh')
                 ->color('gray')
                 ->action(fn () => null),
@@ -64,26 +61,30 @@ class Players extends Page implements HasForms
         }
 
         $serverId = $server->uuid;
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         
         $allPlayers = $provider->getAllPlayers($serverId);
         $admins = $provider->getAdmins($serverId);
         $banned = $provider->getBannedPlayers($serverId);
         
-        $adminNames = array_column($admins, 'name');
+        // Case-insensitive admin names (lowercase for comparison)
+        $adminNames = array_map('strtolower', array_column($admins, 'name'));
+        
         $bannedData = [];
         foreach ($banned as $b) {
-            $bannedData[$b['name']] = $b['reason'] ?? '';
+            $bannedData[strtolower($b['name'])] = $b['reason'] ?? '';
         }
 
         $players = [];
         foreach ($allPlayers as $player) {
+            $playerNameLower = strtolower($player['name']);
+            
             $players[] = [
                 'name' => $player['name'],
                 'online' => $player['online'] ?? false,
-                'is_admin' => in_array($player['name'], $adminNames),
-                'is_banned' => isset($bannedData[$player['name']]),
-                'ban_reason' => $bannedData[$player['name']] ?? '',
+                'is_admin' => in_array($playerNameLower, $adminNames, true),
+                'is_banned' => isset($bannedData[$playerNameLower]),
+                'ban_reason' => $bannedData[$playerNameLower] ?? '',
             ];
         }
 
@@ -106,9 +107,12 @@ class Players extends Page implements HasForms
         $provider->promotePlayer($server->uuid, $playerName);
         
         Notification::make()
-            ->title(__('factorio-rcon::messages.actions.promote.notify'))
+            ->title(__('factorio-manager::messages.actions.promote.notify'))
             ->success()
             ->send();
+        
+        // Refresh the component to update the player list
+        $this->dispatch('$refresh');
     }
 
     public function demotePlayer(string $playerName): void
@@ -120,9 +124,12 @@ class Players extends Page implements HasForms
         $provider->demotePlayer($server->uuid, $playerName);
         
         Notification::make()
-            ->title(__('factorio-rcon::messages.actions.demote.notify'))
+            ->title(__('factorio-manager::messages.actions.demote.notify'))
             ->success()
             ->send();
+        
+        // Refresh the component to update the player list
+        $this->dispatch('$refresh');
     }
 
     public function kickPlayer(string $playerName, string $reason = ''): void
@@ -131,12 +138,15 @@ class Players extends Page implements HasForms
         if (!$server) return;
 
         $provider = app(FactorioRconProvider::class);
-        $provider->kickPlayer($server->uuid, $playerName, $reason ?: __('factorio-rcon::messages.actions.kick.default_reason'));
+        $provider->kickPlayer($server->uuid, $playerName, $reason ?: __('factorio-manager::messages.actions.kick.default_reason'));
         
         Notification::make()
-            ->title(__('factorio-rcon::messages.actions.kick.notify'))
+            ->title(__('factorio-manager::messages.actions.kick.notify'))
             ->success()
             ->send();
+        
+        // Refresh the component to update the player list
+        $this->dispatch('$refresh');
     }
 
     public function banPlayer(string $playerName, string $reason = ''): void
@@ -145,12 +155,15 @@ class Players extends Page implements HasForms
         if (!$server) return;
 
         $provider = app(FactorioRconProvider::class);
-        $provider->banPlayer($server->uuid, $playerName, $reason ?: __('factorio-rcon::messages.actions.ban.default_reason'));
+        $provider->banPlayer($server->uuid, $playerName, $reason ?: __('factorio-manager::messages.actions.ban.default_reason'));
         
         Notification::make()
-            ->title(__('factorio-rcon::messages.actions.ban.notify'))
+            ->title(__('factorio-manager::messages.actions.ban.notify'))
             ->success()
             ->send();
+        
+        // Refresh the component to update the player list
+        $this->dispatch('$refresh');
     }
 
     public function unbanPlayer(string $playerName): void
@@ -162,8 +175,11 @@ class Players extends Page implements HasForms
         $provider->unbanPlayer($server->uuid, $playerName);
         
         Notification::make()
-            ->title(__('factorio-rcon::messages.actions.unban.notify'))
+            ->title(__('factorio-manager::messages.actions.unban.notify'))
             ->success()
             ->send();
+        
+        // Refresh the component to update the player list
+        $this->dispatch('$refresh');
     }
 }

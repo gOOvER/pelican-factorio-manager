@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'navigation_label' => 'Factorio RCON',
+    'navigation_label' => 'Spieler',
 
     'columns' => [
         'name' => 'Spielername',
@@ -38,24 +38,29 @@ return [
             'reason' => 'Grund',
             'default_reason' => 'Vom Administrator gekickt',
             'notify' => 'Kick-Befehl gesendet',
+            'confirm' => 'Bist du sicher, dass du :name kicken möchtest?',
         ],
         'ban' => [
             'label' => 'Bannen',
             'reason' => 'Grund',
             'default_reason' => 'Vom Administrator gebannt',
             'notify' => 'Ban-Befehl gesendet',
+            'confirm' => 'Bist du sicher, dass du :name bannen möchtest?',
         ],
         'unban' => [
             'label' => 'Entbannen',
             'notify' => 'Unban-Befehl gesendet',
+            'confirm' => 'Bist du sicher, dass du :name entbannen möchtest?',
         ],
         'promote' => [
             'label' => 'Zu Admin befördern',
             'notify' => 'Spieler wurde zum Admin befördert',
+            'confirm' => 'Bist du sicher, dass du :name zum Admin befördern möchtest?',
         ],
         'demote' => [
             'label' => 'Admin entfernen',
             'notify' => 'Admin-Rechte wurden entfernt',
+            'confirm' => 'Bist du sicher, dass du :name die Admin-Rechte entziehen möchtest?',
         ],
         'message' => [
             'label' => 'Nachricht senden',
@@ -82,6 +87,7 @@ return [
         'connected' => 'Verbunden',
         'disconnected' => 'Getrennt',
         'none' => 'Keine',
+        'no_players' => 'Keine Spieler gefunden',
     ],
 
     'settings' => [

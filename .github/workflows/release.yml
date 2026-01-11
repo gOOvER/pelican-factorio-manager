@@ -53,10 +53,10 @@ jobs:
       
       - name: Create plugin archive
         run: |
-          mkdir -p release/factorio-rcon
-          rsync -av --exclude='.git' --exclude='.github' --exclude='release' . release/factorio-rcon/
+          mkdir -p release/factorio-manager
+          rsync -av --exclude='.git' --exclude='.github' --exclude='release' . release/factorio-manager/
           cd release
-          zip -r factorio-rcon-${{ github.event.inputs.version }}.zip factorio-rcon/
+          zip -r factorio-manager-${{ github.event.inputs.version }}.zip factorio-manager/
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -65,9 +65,9 @@ jobs:
           name: Release v${{ github.event.inputs.version }}
           draft: false
           prerelease: false
-          files: release/factorio-rcon-${{ github.event.inputs.version }}.zip
+          files: release/factorio-manager-${{ github.event.inputs.version }}.zip
           body: |
-            ## Factorio RCON Manager v${{ github.event.inputs.version }}
+            ## Factorio Manager v${{ github.event.inputs.version }}
             
             ${{ steps.changelog.outputs.notes }}
             

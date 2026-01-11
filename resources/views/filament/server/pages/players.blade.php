@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+    <div wire:poll.5s>
     @php
         $players = $this->getPlayers();
     @endphp
@@ -8,16 +9,16 @@
         <div class="flex items-center gap-4">
             <x-filament::input.wrapper>
                 <x-filament::input.select wire:model.live="statusFilter">
-                    <option value="all">{{ __('factorio-rcon::messages.filters.all') }}</option>
-                    <option value="online">{{ __('factorio-rcon::messages.filters.online') }}</option>
-                    <option value="offline">{{ __('factorio-rcon::messages.filters.offline') }}</option>
-                    <option value="admin">{{ __('factorio-rcon::messages.filters.admin') }}</option>
-                    <option value="banned">{{ __('factorio-rcon::messages.filters.banned') }}</option>
+                    <option value="all">{{ __('factorio-manager::messages.filters.all') }}</option>
+                    <option value="online">{{ __('factorio-manager::messages.filters.online') }}</option>
+                    <option value="offline">{{ __('factorio-manager::messages.filters.offline') }}</option>
+                    <option value="admin">{{ __('factorio-manager::messages.filters.admin') }}</option>
+                    <option value="banned">{{ __('factorio-manager::messages.filters.banned') }}</option>
                 </x-filament::input.select>
             </x-filament::input.wrapper>
             
             <span class="text-sm text-gray-500">
-                {{ count($players) }} {{ __('factorio-rcon::messages.columns.name') }}
+                {{ count($players) }} {{ __('factorio-manager::messages.columns.name') }}
             </span>
         </div>
 
@@ -28,19 +29,19 @@
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-800">
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                {{ __('factorio-rcon::messages.columns.name') }}
+                                {{ __('factorio-manager::messages.columns.name') }}
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                {{ __('factorio-rcon::messages.columns.status') }}
+                                {{ __('factorio-manager::messages.columns.status') }}
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                {{ __('factorio-rcon::messages.columns.admin') }}
+                                {{ __('factorio-manager::messages.columns.admin') }}
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                {{ __('factorio-rcon::messages.filters.banned') }}
+                                {{ __('factorio-manager::messages.filters.banned') }}
                             </th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                {{ __('factorio-rcon::messages.sections.management') }}
+                                {{ __('factorio-manager::messages.sections.management') }}
                             </th>
                         </tr>
                     </thead>
@@ -78,59 +79,54 @@
                                         {{-- Promote/Demote --}}
                                         @if($player['is_admin'])
                                             <x-filament::button
-                                                wire:click="demotePlayer('{{ $player['name'] }}')"
-                                                wire:confirm="{{ __('factorio-rcon::messages.actions.demote.label') }}?"
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.demote.confirm', ['name' => $player['name']]) }}')) { $wire.demotePlayer('{{ $player['name'] }}') }"
                                                 color="warning"
                                                 size="xs"
                                                 icon="tabler-shield-x"
                                             >
-                                                {{ __('factorio-rcon::messages.actions.demote.label') }}
+                                                {{ __('factorio-manager::messages.actions.demote.label') }}
                                             </x-filament::button>
                                         @else
                                             <x-filament::button
-                                                wire:click="promotePlayer('{{ $player['name'] }}')"
-                                                wire:confirm="{{ __('factorio-rcon::messages.actions.promote.label') }}?"
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.promote.confirm', ['name' => $player['name']]) }}')) { $wire.promotePlayer('{{ $player['name'] }}') }"
                                                 color="success"
                                                 size="xs"
                                                 icon="tabler-shield-check"
                                             >
-                                                {{ __('factorio-rcon::messages.actions.promote.label') }}
+                                                {{ __('factorio-manager::messages.actions.promote.label') }}
                                             </x-filament::button>
                                         @endif
 
                                         {{-- Kick --}}
                                         @if($player['online'])
                                             <x-filament::button
-                                                wire:click="kickPlayer('{{ $player['name'] }}')"
-                                                wire:confirm="{{ __('factorio-rcon::messages.actions.kick.label') }}?"
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.kick.confirm', ['name' => $player['name']]) }}')) { $wire.kickPlayer('{{ $player['name'] }}') }"
                                                 color="danger"
                                                 size="xs"
                                                 icon="tabler-door-exit"
                                             >
-                                                {{ __('factorio-rcon::messages.actions.kick.label') }}
+                                                {{ __('factorio-manager::messages.actions.kick.label') }}
                                             </x-filament::button>
                                         @endif
 
                                         {{-- Ban/Unban --}}
                                         @if($player['is_banned'])
                                             <x-filament::button
-                                                wire:click="unbanPlayer('{{ $player['name'] }}')"
-                                                wire:confirm="{{ __('factorio-rcon::messages.actions.unban.label') }}?"
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.unban.confirm', ['name' => $player['name']]) }}')) { $wire.unbanPlayer('{{ $player['name'] }}') }"
                                                 color="success"
                                                 size="xs"
                                                 icon="tabler-circle-check"
                                             >
-                                                {{ __('factorio-rcon::messages.actions.unban.label') }}
+                                                {{ __('factorio-manager::messages.actions.unban.label') }}
                                             </x-filament::button>
                                         @else
                                             <x-filament::button
-                                                wire:click="banPlayer('{{ $player['name'] }}')"
-                                                wire:confirm="{{ __('factorio-rcon::messages.actions.ban.label') }}?"
+                                                x-on:click="if(confirm('{{ __('factorio-manager::messages.actions.ban.confirm', ['name' => $player['name']]) }}')) { $wire.banPlayer('{{ $player['name'] }}') }"
                                                 color="danger"
                                                 size="xs"
                                                 icon="tabler-ban"
                                             >
-                                                {{ __('factorio-rcon::messages.actions.ban.label') }}
+                                                {{ __('factorio-manager::messages.actions.ban.label') }}
                                             </x-filament::button>
                                         @endif
                                     </div>
@@ -139,7 +135,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                    {{ __('factorio-rcon::messages.chat.no_messages') }}
+                                    {{ __('factorio-manager::messages.values.no_players') }}
                                 </td>
                             </tr>
                         @endforelse
@@ -147,5 +143,6 @@
                 </table>
             </div>
         </x-filament::section>
+    </div>
     </div>
 </x-filament-panels::page>

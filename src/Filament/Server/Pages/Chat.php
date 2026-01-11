@@ -1,6 +1,6 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Filament\Server\Pages;
+namespace gOOvER\FactorioManager\Filament\Server\Pages;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -11,8 +11,8 @@ use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Facades\Filament;
-use gOOvER\FactorioRcon\Helpers\VisibilityHelper;
-use gOOvER\FactorioRcon\Services\FactorioRconProvider;
+use gOOvER\FactorioManager\Helpers\VisibilityHelper;
+use gOOvER\FactorioManager\Services\FactorioRconProvider;
 
 class Chat extends Page implements HasForms
 {
@@ -20,20 +20,28 @@ class Chat extends Page implements HasForms
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-message-circle';
 
-    protected string $view = 'factorio-rcon::filament.server.pages.chat';
+    protected string $view = 'factorio-manager::filament.server.pages.chat';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Factorio';
 
     public ?array $data = [];
 
+    // Auto-refresh every 5 seconds
+    public function getPollingInterval(): ?string
+    {
+        return '5s';
+    }
+
     public static function getNavigationLabel(): string
     {
-        return __('factorio-rcon::messages.pages.chat');
+        return __('factorio-manager::messages.pages.chat');
     }
 
     public function getTitle(): string
     {
-        return __('factorio-rcon::messages.pages.chat');
+        return __('factorio-manager::messages.pages.chat');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -54,15 +62,15 @@ class Chat extends Page implements HasForms
         return $schema
             ->components([
                 Select::make('recipient')
-                    ->label(__('factorio-rcon::messages.chat.recipient'))
+                    ->label(__('factorio-manager::messages.chat.recipient'))
                     ->options(fn () => $this->getRecipientOptions())
                     ->default('all')
                     ->native(false)
                     ->searchable()
                     ->required(),
                 TextInput::make('message')
-                    ->label(__('factorio-rcon::messages.chat.message'))
-                    ->placeholder(__('factorio-rcon::messages.chat.message_placeholder'))
+                    ->label(__('factorio-manager::messages.chat.message'))
+                    ->placeholder(__('factorio-manager::messages.chat.message_placeholder'))
                     ->maxLength(255)
                     ->required()
                     ->extraInputAttributes(['autofocus' => true]),
@@ -72,11 +80,11 @@ class Chat extends Page implements HasForms
 
     protected function getRecipientOptions(): array
     {
-        $options = ['all' => __('factorio-rcon::messages.chat.all_players')];
+        $options = ['all' => __('factorio-manager::messages.chat.all_players')];
 
         $server = Filament::getTenant();
         if ($server) {
-            $provider = new FactorioRconProvider();
+            $provider = app(FactorioRconProvider::class);
             $players = $provider->getOnlinePlayers($server->uuid);
 
             foreach ($players as $player) {
@@ -95,7 +103,7 @@ class Chat extends Page implements HasForms
 
         if (empty($data['message'])) {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.empty_message'))
+                ->title(__('factorio-manager::messages.chat.empty_message'))
                 ->danger()
                 ->send();
             return;
@@ -104,13 +112,13 @@ class Chat extends Page implements HasForms
         $server = Filament::getTenant();
         if (!$server) {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.server_not_found'))
+                ->title(__('factorio-manager::messages.chat.server_not_found'))
                 ->danger()
                 ->send();
             return;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
 
         if ($data['recipient'] === 'all') {
             $success = $provider->sendMessage($server->uuid, $data['message']);
@@ -120,7 +128,7 @@ class Chat extends Page implements HasForms
 
         if ($success) {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.message_sent'))
+                ->title(__('factorio-manager::messages.chat.message_sent'))
                 ->success()
                 ->send();
 
@@ -130,7 +138,7 @@ class Chat extends Page implements HasForms
             ]);
         } else {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.message_failed'))
+                ->title(__('factorio-manager::messages.chat.message_failed'))
                 ->danger()
                 ->send();
         }
@@ -154,7 +162,7 @@ class Chat extends Page implements HasForms
             return null;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         return $provider->getChatLog($server->uuid);
     }
 
@@ -168,7 +176,7 @@ class Chat extends Page implements HasForms
             return false;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         return $provider->isChatLogAvailable($server->uuid);
     }
 
@@ -182,7 +190,7 @@ class Chat extends Page implements HasForms
             return null;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         return $provider->getExtendedServerStatus($server->uuid);
     }
 
@@ -196,7 +204,7 @@ class Chat extends Page implements HasForms
             return null;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         return $provider->getDetailedOnlinePlayers($server->uuid);
     }
 
@@ -208,23 +216,23 @@ class Chat extends Page implements HasForms
         $server = Filament::getTenant();
         if (!$server) {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.server_not_found'))
+                ->title(__('factorio-manager::messages.chat.server_not_found'))
                 ->danger()
                 ->send();
             return;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         $success = $provider->clearChatLog($server->uuid);
 
         if ($success) {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.log_cleared'))
+                ->title(__('factorio-manager::messages.chat.log_cleared'))
                 ->success()
                 ->send();
         } else {
             Notification::make()
-                ->title(__('factorio-rcon::messages.chat.clear_failed'))
+                ->title(__('factorio-manager::messages.chat.clear_failed'))
                 ->danger()
                 ->send();
         }
@@ -240,7 +248,7 @@ class Chat extends Page implements HasForms
             return null;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         return $provider->getModVersion($server->uuid);
     }
 
@@ -248,7 +256,7 @@ class Chat extends Page implements HasForms
     {
         return [
             Action::make('send')
-                ->label(__('factorio-rcon::messages.chat.send'))
+                ->label(__('factorio-manager::messages.chat.send'))
                 ->icon('tabler-send')
                 ->action('sendMessage'),
         ];

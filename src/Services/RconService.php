@@ -1,6 +1,6 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Services;
+namespace gOOvER\FactorioManager\Services;
 
 use Illuminate\Support\Facades\Log;
 
@@ -134,5 +134,16 @@ class RconService
     public function getLastError(): string
     {
         return $this->lastError;
+    }
+
+    public function isConnected(): bool
+    {
+        if (!$this->socket || !$this->authorized) {
+            return false;
+        }
+
+        // Check if socket is still valid
+        $meta = @stream_get_meta_data($this->socket);
+        return $meta && !$meta['eof'] && !$meta['timed_out'];
     }
 }

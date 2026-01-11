@@ -1,17 +1,20 @@
 <?php
 
-namespace gOOvER\FactorioRcon\Filament\Server\Widgets;
+namespace gOOvER\FactorioManager\Filament\Server\Widgets;
 
 use Filament\Widgets\Widget;
 use Filament\Facades\Filament;
-use gOOvER\FactorioRcon\Services\FactorioRconProvider;
-use gOOvER\FactorioRcon\Helpers\VisibilityHelper;
+use gOOvER\FactorioManager\Services\FactorioRconProvider;
+use gOOvER\FactorioManager\Helpers\VisibilityHelper;
 
 class ChatWidget extends Widget
 {
-    protected string $view = 'factorio-rcon::filament.server.widgets.chat';
+    protected string $view = 'factorio-manager::filament.server.widgets.chat';
 
     protected int | string | array $columnSpan = 'full';
+
+    // Auto-refresh every 5 seconds for chat
+    protected ?string $pollingInterval = '5s';
 
     public $message = '';
     public $recipient = 'all';
@@ -20,7 +23,7 @@ class ChatWidget extends Widget
     {
         if (empty($this->message)) {
             \Filament\Notifications\Notification::make()
-                ->title(__('factorio-rcon::messages.chat.empty_message'))
+                ->title(__('factorio-manager::messages.chat.empty_message'))
                 ->danger()
                 ->send();
             return;
@@ -29,13 +32,13 @@ class ChatWidget extends Widget
         $server = Filament::getTenant();
         if (!$server) {
             \Filament\Notifications\Notification::make()
-                ->title(__('factorio-rcon::messages.chat.server_not_found'))
+                ->title(__('factorio-manager::messages.chat.server_not_found'))
                 ->danger()
                 ->send();
             return;
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         
         if ($this->recipient === 'all') {
             $success = $provider->sendMessage($server->uuid, $this->message);
@@ -45,14 +48,14 @@ class ChatWidget extends Widget
 
         if ($success) {
             \Filament\Notifications\Notification::make()
-                ->title(__('factorio-rcon::messages.chat.message_sent'))
+                ->title(__('factorio-manager::messages.chat.message_sent'))
                 ->success()
                 ->send();
             
             $this->message = '';
         } else {
             \Filament\Notifications\Notification::make()
-                ->title(__('factorio-rcon::messages.chat.message_failed'))
+                ->title(__('factorio-manager::messages.chat.message_failed'))
                 ->danger()
                 ->send();
         }
@@ -65,7 +68,7 @@ class ChatWidget extends Widget
             return [];
         }
 
-        $provider = new FactorioRconProvider();
+        $provider = app(FactorioRconProvider::class);
         $players = $provider->getOnlinePlayers($server->uuid);
         
         return array_filter($players, fn($p) => $p['online'] ?? false);

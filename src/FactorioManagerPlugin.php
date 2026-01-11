@@ -1,6 +1,6 @@
 <?php
 
-namespace gOOvER\FactorioRcon;
+namespace gOOvER\FactorioManager;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
@@ -11,13 +11,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 
-class FactorioRconPlugin implements Plugin, HasPluginSettings
+class FactorioManagerPlugin implements Plugin, HasPluginSettings
 {
     use EnvironmentWriterTrait;
 
     public function getId(): string
     {
-        return 'factorio-rcon';
+        return 'factorio-manager';
     }
 
     public function register(Panel $panel): void
@@ -27,15 +27,15 @@ class FactorioRconPlugin implements Plugin, HasPluginSettings
         // Discover Resources, Pages, and Widgets dynamically
         $panel->discoverResources(
             plugin_path($this->getId(), "src/Filament/$id/Resources"), 
-            "gOOvER\\FactorioRcon\\Filament\\$id\\Resources"
+            "gOOvER\\FactorioManager\\Filament\\$id\\Resources"
         );
         $panel->discoverPages(
             plugin_path($this->getId(), "src/Filament/$id/Pages"), 
-            "gOOvER\\FactorioRcon\\Filament\\$id\\Pages"
+            "gOOvER\\FactorioManager\\Filament\\$id\\Pages"
         );
         $panel->discoverWidgets(
             plugin_path($this->getId(), "src/Filament/$id/Widgets"), 
-            "gOOvER\\FactorioRcon\\Filament\\$id\\Widgets"
+            "gOOvER\\FactorioManager\\Filament\\$id\\Widgets"
         );
     }
 
@@ -43,15 +43,15 @@ class FactorioRconPlugin implements Plugin, HasPluginSettings
     {
         // Register Views (views are auto-registered under plugin namespace)
         \Illuminate\Support\Facades\View::addNamespace(
-            'factorio-rcon', 
-            plugin_path('factorio-rcon', 'resources/views')
+            'factorio-manager', 
+            plugin_path('factorio-manager', 'resources/views')
         );
 
         // Register widgets for Server panel only
         if ($panel->getId() === 'server') {
             \App\Filament\Server\Pages\Console::registerCustomWidgets(
                 \App\Enums\ConsoleWidgetPosition::AboveConsole, 
-                [\gOOvER\FactorioRcon\Filament\Server\Widgets\ServerStatusWidget::class]
+                [\gOOvER\FactorioManager\Filament\Server\Widgets\ServerStatusWidget::class]
             );
         }
     }
@@ -60,12 +60,12 @@ class FactorioRconPlugin implements Plugin, HasPluginSettings
     {
         return [
             Toggle::make('rcon_enabled')
-                ->label(__('factorio-rcon::messages.settings.rcon_enabled'))
-                ->helperText(__('factorio-rcon::messages.settings.rcon_enabled_helper'))
+                ->label(__('factorio-manager::messages.settings.rcon_enabled'))
+                ->helperText(__('factorio-manager::messages.settings.rcon_enabled_helper'))
                 ->default(env('FACTORIO_RCON_ENABLED', true)),
             TextInput::make('nav_sort')
-                ->label(__('factorio-rcon::messages.settings.nav_sort'))
-                ->helperText(__('factorio-rcon::messages.settings.nav_sort_helper'))
+                ->label(__('factorio-manager::messages.settings.nav_sort'))
+                ->helperText(__('factorio-manager::messages.settings.nav_sort_helper'))
                 ->numeric()
                 ->default(env('FACTORIO_RCON_NAV_SORT', 2)),
         ];
@@ -79,7 +79,7 @@ class FactorioRconPlugin implements Plugin, HasPluginSettings
         ]);
 
         Notification::make()
-            ->title(__('factorio-rcon::messages.settings.saved'))
+            ->title(__('factorio-manager::messages.settings.saved'))
             ->success()
             ->send();
     }
